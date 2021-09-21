@@ -1,10 +1,7 @@
 local home_dir = vim.loop.os_homedir()
-CONFIG_PATH = home_dir .. "/.local/share/lunarvim/lvim"
-DATA_PATH = vim.fn.stdpath "data"
-CACHE_PATH = vim.fn.stdpath "cache"
-TERMINAL = vim.fn.expand "$TERMINAL"
-USER = vim.fn.expand "$USER"
-vim.cmd [[ set spellfile=~/.config/lvim/spell/en.utf-8.add ]]
+local utils = require "utils"
+-- FIXME: stop using hard-coded paths for LspInstall
+local ls_install_prefix = vim.fn.stdpath "data" .. "/lspinstall"
 
 lvim = {
   leader = "space",
@@ -12,8 +9,8 @@ lvim = {
   line_wrap_cursor_movement = true,
   transparent_window = false,
   format_on_save = true,
-  vsnip_dir = home_dir .. "/.config/snippets",
-  database = { save_location = "~/.config/lunarvim_db", auto_execute = 1 },
+  vsnip_dir = utils.join_paths(home_dir, ".config", "snippets"),
+  database = { save_location = utils.join_paths(home_dir, ".config", "lunarvim_db"), auto_execute = 1 },
   keys = {},
 
   builtin = {},
@@ -37,30 +34,30 @@ lvim = {
   lsp = {
     completion = {
       item_kind = {
-        "   (Text) ",
+        "   (Text) ",
         "   (Method)",
         "   (Function)",
         "   (Constructor)",
-        " ﴲ  (Field)",
-        "[] (Variable)",
+        "   (Field)",
+        "   (Variable)",
         "   (Class)",
         " ﰮ  (Interface)",
         "   (Module)",
-        " 襁 (Property)",
-        "   (Unit)",
+        "   (Property)",
+        " 塞 (Unit)",
         "   (Value)",
         " 練 (Enum)",
         "   (Keyword)",
         "   (Snippet)",
         "   (Color)",
-        "   (File)",
+        "   (File)",
         "   (Reference)",
         "   (Folder)",
         "   (EnumMember)",
         " ﲀ  (Constant)",
-        " ﳤ  (Struct)",
+        "   (Struct)",
         "   (Event)",
-        "   (Operator)",
+        "   (Operator)",
         "   (TypeParameter)",
       },
     },
@@ -78,6 +75,7 @@ lvim = {
         prefix = "",
         spacing = 0,
       },
+      update_in_insert = false,
       underline = true,
       severity_sort = true,
     },
@@ -134,6 +132,20 @@ lvim.lang = {
       },
     },
   },
+  bicep = {
+    formatters = {},
+    linters = {},
+    lsp = {
+      provider = "bicep",
+      setup = {
+        cmd = {
+          "dotnet",
+          ls_install_prefix .. "/bicep/Bicep.LangServer.dll",
+        },
+        filetypes = { "bicep" },
+      },
+    },
+  },
   c = {
     formatters = {
       -- {
@@ -150,7 +162,7 @@ lvim.lang = {
       provider = "clangd",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/cpp/clangd/bin/clangd",
+          ls_install_prefix .. "/cpp/clangd/bin/clangd",
           "--background-index",
           "--header-insertion=never",
           "--cross-file-rename",
@@ -176,7 +188,7 @@ lvim.lang = {
       provider = "clangd",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/cpp/clangd/bin/clangd",
+          ls_install_prefix .. "/cpp/clangd/bin/clangd",
           "--background-index",
           "--header-insertion=never",
           "--cross-file-rename",
@@ -217,7 +229,7 @@ lvim.lang = {
       provider = "omnisharp",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/csharp/omnisharp/run",
+          ls_install_prefix .. "/csharp/omnisharp/run",
           "--languageserver",
           "--hostPID",
           tostring(vim.fn.getpid()),
@@ -237,7 +249,7 @@ lvim.lang = {
       provider = "cmake",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/cmake/venv/bin/cmake-language-server",
+          ls_install_prefix .. "/cmake/venv/bin/cmake-language-server",
         },
       },
     },
@@ -249,7 +261,7 @@ lvim.lang = {
       provider = "clojure_lsp",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/clojure/clojure-lsp",
+          ls_install_prefix .. "/clojure/clojure-lsp",
         },
       },
     },
@@ -271,7 +283,7 @@ lvim.lang = {
       setup = {
         cmd = {
           "node",
-          DATA_PATH .. "/lspinstall/css/vscode-css/css-language-features/server/dist/node/cssServerMain.js",
+          ls_install_prefix .. "/css/vscode-css/css-language-features/server/dist/node/cssServerMain.js",
           "--stdio",
         },
       },
@@ -294,7 +306,7 @@ lvim.lang = {
       setup = {
         cmd = {
           "node",
-          DATA_PATH .. "/lspinstall/css/vscode-css/css-language-features/server/dist/node/cssServerMain.js",
+          ls_install_prefix .. "/css/vscode-css/css-language-features/server/dist/node/cssServerMain.js",
           "--stdio",
         },
       },
@@ -334,14 +346,14 @@ lvim.lang = {
       },
     },
   },
-  docker = {
+  dockerfile = {
     formatters = {},
     linters = {},
     lsp = {
       provider = "dockerls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/dockerfile/node_modules/.bin/docker-langserver",
+          ls_install_prefix .. "/dockerfile/node_modules/.bin/docker-langserver",
           "--stdio",
         },
       },
@@ -359,7 +371,7 @@ lvim.lang = {
       provider = "elixirls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/elixir/elixir-ls/language_server.sh",
+          ls_install_prefix .. "/elixir/elixir-ls/language_server.sh",
         },
       },
     },
@@ -376,13 +388,13 @@ lvim.lang = {
       provider = "elmls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/elm/node_modules/.bin/elm-language-server",
+          ls_install_prefix .. "/elm/node_modules/.bin/elm-language-server",
         },
         -- init_options = {
         -- elmAnalyseTrigger = "change",
-        -- elmFormatPath = DATA_PATH .. "/lspinstall/elm/node_modules/.bin/elm-format",
-        -- elmPath = DATA_PATH .. "/lspinstall/elm/node_modules/.bin/",
-        -- elmTestPath = DATA_PATH .. "/lspinstall/elm/node_modules/.bin/elm-test",
+        -- elmFormatPath = ls_install_prefix .. "/elm/node_modules/.bin/elm-format",
+        -- elmPath = ls_install_prefix .. "/elm/node_modules/.bin/",
+        -- elmTestPath = ls_install_prefix .. "/elm/node_modules/.bin/elm-test",
         -- },
       },
     },
@@ -425,7 +437,7 @@ lvim.lang = {
       provider = "fortls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/fortran/venv/bin/fortls",
+          ls_install_prefix .. "/fortran/venv/bin/fortls",
         },
       },
     },
@@ -450,7 +462,7 @@ lvim.lang = {
       provider = "gopls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/go/gopls",
+          ls_install_prefix .. "/go/gopls",
         },
       },
     },
@@ -476,7 +488,7 @@ lvim.lang = {
     lsp = {
       provider = "hls",
       setup = {
-        cmd = { DATA_PATH .. "/lspinstall/haskell/hls" },
+        cmd = { ls_install_prefix .. "/haskell/hls" },
       },
     },
   },
@@ -497,7 +509,7 @@ lvim.lang = {
       setup = {
         cmd = {
           "node",
-          DATA_PATH .. "/lspinstall/html/vscode-html/html-language-features/server/dist/node/htmlServerMain.js",
+          ls_install_prefix .. "/html/vscode-html/html-language-features/server/dist/node/htmlServerMain.js",
           "--stdio",
         },
       },
@@ -518,7 +530,7 @@ lvim.lang = {
     lsp = {
       provider = "jdtls",
       setup = {
-        cmd = { DATA_PATH .. "/lspinstall/java/jdtls.sh" },
+        cmd = { ls_install_prefix .. "/java/jdtls.sh" },
       },
     },
   },
@@ -543,7 +555,7 @@ lvim.lang = {
       setup = {
         cmd = {
           "node",
-          DATA_PATH .. "/lspinstall/json/vscode-json/json-language-features/server/dist/node/jsonServerMain.js",
+          ls_install_prefix .. "/json/vscode-json/json-language-features/server/dist/node/jsonServerMain.js",
           "--stdio",
         },
         settings = {
@@ -577,8 +589,7 @@ lvim.lang = {
           "julia",
           "--startup-file=no",
           "--history-file=no",
-          -- vim.fn.expand "~/.config/nvim/lua/lsp/julia/run.jl",
-          CONFIG_PATH .. "/utils/julia/run.jl",
+          -- self.runtime_dir .. "lvim/utils/julia/run.jl",
         },
       },
     },
@@ -590,7 +601,7 @@ lvim.lang = {
       provider = "kotlin_language_server",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/kotlin/server/bin/kotlin-language-server",
+          ls_install_prefix .. "/kotlin/server/bin/kotlin-language-server",
         },
         root_dir = function(fname)
           local util = require "lspconfig/util"
@@ -627,9 +638,9 @@ lvim.lang = {
       provider = "sumneko_lua",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/lua/sumneko-lua-language-server",
+          ls_install_prefix .. "/lua/sumneko-lua-language-server",
           "-E",
-          DATA_PATH .. "/lspinstall/lua/main.lua",
+          ls_install_prefix .. "/lua/main.lua",
         },
         settings = {
           Lua = {
@@ -646,7 +657,7 @@ lvim.lang = {
             workspace = {
               -- Make the server aware of Neovim runtime files
               library = {
-                [vim.fn.expand "~/.local/share/lunarvim/lvim/lua"] = true,
+                [require("utils").join_paths(get_runtime_dir(), "lvim", "lua")] = true,
                 [vim.fn.expand "$VIMRUNTIME/lua"] = true,
                 [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
               },
@@ -684,6 +695,16 @@ lvim.lang = {
       setup = {},
     },
   },
+  solidity = {
+    formatters = {},
+    linters = {},
+    lsp = {
+      provider = "solang",
+      setup = {
+        cmd = { "solang", "--language-server" },
+      },
+    },
+  },
   sql = {
     formatters = {
       -- {
@@ -711,7 +732,7 @@ lvim.lang = {
       provider = "intelephense",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/php/node_modules/.bin/intelephense",
+          ls_install_prefix .. "/php/node_modules/.bin/intelephense",
           "--stdio",
         },
         filetypes = { "php", "phtml" },
@@ -732,7 +753,7 @@ lvim.lang = {
       provider = "puppet",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/puppet/puppet-editor-services/puppet-languageserver",
+          ls_install_prefix .. "/puppet/puppet-editor-services/puppet-languageserver",
           "--stdio",
         },
       },
@@ -760,7 +781,7 @@ lvim.lang = {
       setup = {
         cmd = {
           -- TODO:
-          DATA_PATH .. "/lspinstall/typescript/node_modules/.bin/typescript-language-server",
+          ls_install_prefix .. "/typescript/node_modules/.bin/typescript-language-server",
           "--stdio",
         },
       },
@@ -787,7 +808,7 @@ lvim.lang = {
       setup = {
         cmd = {
           -- TODO:
-          DATA_PATH .. "/lspinstall/typescript/node_modules/.bin/typescript-language-server",
+          ls_install_prefix .. "/typescript/node_modules/.bin/typescript-language-server",
           "--stdio",
         },
       },
@@ -809,7 +830,7 @@ lvim.lang = {
       provider = "pyright",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/python/node_modules/.bin/pyright-langserver",
+          ls_install_prefix .. "/python/node_modules/.bin/pyright-langserver",
           "--stdio",
         },
       },
@@ -849,7 +870,7 @@ lvim.lang = {
       provider = "solargraph",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/ruby/solargraph/solargraph",
+          ls_install_prefix .. "/ruby/solargraph/solargraph",
           "stdio",
         },
         filetypes = { "ruby" },
@@ -880,7 +901,7 @@ lvim.lang = {
       provider = "rust_analyzer",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/rust/rust-analyzer",
+          ls_install_prefix .. "/rust/rust-analyzer",
         },
       },
     },
@@ -892,7 +913,7 @@ lvim.lang = {
       --   args = {},
       -- },
     },
-    linters = { "" },
+    linters = {},
     lsp = {
       provider = "metals",
       setup = {},
@@ -910,7 +931,7 @@ lvim.lang = {
       provider = "bashls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/bash/node_modules/.bin/bash-language-server",
+          ls_install_prefix .. "/bash/node_modules/.bin/bash-language-server",
           "start",
         },
       },
@@ -923,7 +944,7 @@ lvim.lang = {
       provider = "svelte",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/svelte/node_modules/.bin/svelteserver",
+          ls_install_prefix .. "/svelte/node_modules/.bin/svelteserver",
           "--stdio",
         },
       },
@@ -953,7 +974,7 @@ lvim.lang = {
       provider = "tailwindcss",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/tailwindcss/node_modules/.bin/tailwindcss-language-server",
+          ls_install_prefix .. "/tailwindcss/node_modules/.bin/tailwindcss-language-server",
           "--stdio",
         },
       },
@@ -971,7 +992,7 @@ lvim.lang = {
       provider = "terraformls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/terraform/terraform-ls",
+          ls_install_prefix .. "/terraform/terraform-ls",
           "serve",
         },
       },
@@ -983,7 +1004,7 @@ lvim.lang = {
     lsp = {
       provider = "texlab",
       setup = {
-        cmd = { DATA_PATH .. "/lspinstall/latex/texlab" },
+        cmd = { ls_install_prefix .. "/latex/texlab" },
       },
     },
   },
@@ -1008,7 +1029,7 @@ lvim.lang = {
       setup = {
         cmd = {
           -- TODO:
-          DATA_PATH .. "/lspinstall/typescript/node_modules/.bin/typescript-language-server",
+          ls_install_prefix .. "/typescript/node_modules/.bin/typescript-language-server",
           "--stdio",
         },
       },
@@ -1036,7 +1057,7 @@ lvim.lang = {
       setup = {
         cmd = {
           -- TODO:
-          DATA_PATH .. "/lspinstall/typescript/node_modules/.bin/typescript-language-server",
+          ls_install_prefix .. "/typescript/node_modules/.bin/typescript-language-server",
           "--stdio",
         },
       },
@@ -1049,7 +1070,7 @@ lvim.lang = {
       provider = "vimls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/vim/node_modules/.bin/vim-language-server",
+          ls_install_prefix .. "/vim/node_modules/.bin/vim-language-server",
           "--stdio",
         },
       },
@@ -1075,7 +1096,7 @@ lvim.lang = {
       provider = "vuels",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/vue/node_modules/.bin/vls",
+          ls_install_prefix .. "/vue/node_modules/.bin/vls",
         },
         root_dir = function(fname)
           local util = require "lspconfig/util"
@@ -1117,7 +1138,7 @@ lvim.lang = {
       provider = "yamlls",
       setup = {
         cmd = {
-          DATA_PATH .. "/lspinstall/yaml/node_modules/.bin/yaml-language-server",
+          ls_install_prefix .. "/yaml/node_modules/.bin/yaml-language-server",
           "--stdio",
         },
       },
