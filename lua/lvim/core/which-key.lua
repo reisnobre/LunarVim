@@ -1,10 +1,36 @@
 local M = {}
+
+local prefix = "<leader>"
+-- local keymap = vim.keymap
+-- local Log = require "lvim.core.log"
+
+-- Function to remove duplicates from tableToClean based on valueArray
+local function removeDuplicatedKeys(tableToClean, userKeysArray)
+  -- Create a set from valueArray for quick lookup
+  local valueSet = {}
+  for _, value in ipairs(userKeysArray) do
+    valueSet[value] = true
+  end
+
+  -- Iterate through tableToClean and remove items found in valueSet
+  local cleanedTable = {}
+  for _, tbl in ipairs(tableToClean) do
+    if not valueSet[tbl[1]] then
+      table.insert(cleanedTable, tbl)
+    end
+  end
+
+  return cleanedTable
+end
+
 M.config = function()
   lvim.builtin.which_key = {
     ---@usage disable which-key completely [not recommended]
     active = true,
     on_config_done = nil,
-    setup = {
+    setup = {},
+    opts = {
+      preset = "helix",
       plugins = {
         marks = false, -- shows a list of your marks on ' and `
         registers = false, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
@@ -75,255 +101,159 @@ M.config = function()
         buftypes = {},
         filetypes = { "TelescopePrompt" },
       },
+      spec = {
+      },
     },
+    vopts = {},
+    user = {},
+    vmappings = {},
+    mappings = {},
+    defaults = {
+      { mode = { "n" },
+        --- Groupless
+        { prefix .. "/", "<Plug>(comment_toggle_linewise_current)", desc = "Comment toggle current line", nowait = true, remap = false },
+        { prefix .. ";", ":Alpha<CR>", desc = "Dashboard", nowait = true, remap = false },
+        { prefix .. "e", ":NvimTreeToggle<CR>", desc = "Explorer", nowait = true, remap = false },
+        { prefix .. "h", ":nohlsearch<CR>", desc = "No Highlight", nowait = true, remap = false },
+        { prefix .. "q", ":confirm q<CR>", desc = "Quit", nowait = true, remap = false },
+        --- LunarVim
+        { prefix .. "L", group = "LunarVim", nowait = true, remap = false },
+        { prefix .. "LI", ":lua require('lvim.core.telescope.custom-finders').view_lunarvim_changelog()<cr>", desc = "View LunarVim's changelog", nowait = true, remap = false },
+        { prefix .. "Lc", ":edit /Users/reisnobre/.config/lvim/config.lua<cr>", desc = "Edit config.lua", nowait = true, remap = false },
+        { prefix .. "Ld", ":LvimDocs<cr>", desc = "View LunarVim's docs", nowait = true, remap = false },
+        { prefix .. "Lf", ":lua require('lvim.core.telescope.custom-finders').find_lunarvim_files()<cr>", desc = "Find LunarVim files", nowait = true, remap = false },
+        { prefix .. "Lg", ":lua require('lvim.core.telescope.custom-finders').grep_lunarvim_files()<cr>", desc = "Grep LunarVim files", nowait = true, remap = false },
+        { prefix .. "Li", ":lua require('lvim.core.info').toggle_popup(vim.bo.filetype)<cr>", desc = "Toggle LunarVim Info", nowait = true, remap = false },
+        { prefix .. "Lk", ":Telescope keymaps<cr>", desc = "View LunarVim's keymappings", nowait = true, remap = false },
+        { prefix .. "Lr", ":LvimReload<cr>", desc = "Reload LunarVim's configuration", nowait = true, remap = false },
+        { prefix .. "Lu", ":LvimUpdate<cr>", desc = "Update LunarVim", nowait = true, remap = false },
+        --- LunarVim Logs
+        { prefix .. "Ll", group = "logs", nowait = true, remap = false },
+        { prefix .. "LlD", ":lua vim.fn.execute('edit ' .. require('lvim.core.log').get_path())<cr>", desc = "Open the default logfile", nowait = true, remap = false },
+        { prefix .. "LlL", ":lua vim.fn.execute('edit ' .. vim.lsp.get_log_path())<cr>", desc = "Open the LSP logfile", nowait = true, remap = false },
+        { prefix .. "LlN", ":edit $NVIM_LOG_FILE<cr>", desc = "Open the Neovim logfile", nowait = true, remap = false },
+        { prefix .. "Lld", ":lua require('lvim.core.terminal').toggle_log_view(require('lvim.core.log').get_path())<cr>", desc = "view default log", nowait = true, remap = false },
+        { prefix .. "Lll", ":lua require('lvim.core.terminal').toggle_log_view(vim.lsp.get_log_path())<cr>", desc = "view lsp log", nowait = true, remap = false },
+        { prefix .. "Lln", ":lua require('lvim.core.terminal').toggle_log_view(os.getenv('NVIM_LOG_FILE'))<cr>", desc = "view neovim log", nowait = true, remap = false },
+        --- Treesitter
+        { prefix .. "T", group = "Treesitter", nowait = true, remap = false },
+        { prefix .. "Ti", ":TSConfigInfo<cr>", desc = "Info", nowait = true, remap = false },
 
-    opts = {
-      mode = "n", -- NORMAL mode
-      prefix = "<leader>",
-      buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-      silent = true, -- use `silent` when creating keymaps
-      noremap = true, -- use `noremap` when creating keymaps
-      nowait = true, -- use `nowait` when creating keymaps
-    },
-    vopts = {
-      mode = "v", -- VISUAL mode
-      prefix = "<leader>",
-      buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-      silent = true, -- use `silent` when creating keymaps
-      noremap = true, -- use `noremap` when creating keymaps
-      nowait = true, -- use `nowait` when creating keymaps
-    },
-    -- NOTE: Prefer using : over <cmd> as the latter avoids going back in normal-mode.
-    -- see https://neovim.io/doc/user/map.html#:map-cmd
-    vmappings = {
-      ["/"] = { "<Plug>(comment_toggle_linewise_visual)", "Comment toggle linewise (visual)" },
-      l = {
-        name = "LSP",
-        a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
+        --- Buffers
+        { prefix .. "b", group = "Buffers", nowait = true, remap = false },
+        { prefix .. "c", ":BufferKill<CR>", desc = "Close Buffer", nowait = true, remap = false },
+        { prefix .. "bD", ":BufferLineSortByDirectory<cr>", desc = "Sort by directory", nowait = true, remap = false },
+        { prefix .. "bL", ":BufferLineSortByExtension<cr>", desc = "Sort by language", nowait = true, remap = false },
+        { prefix .. "bW", ":noautocmd w<cr>", desc = "Save without formatting (noautocmd)", nowait = true, remap = false },
+        { prefix .. "bb", ":BufferLineCyclePrev<cr>", desc = "Previous", nowait = true, remap = false },
+        { prefix .. "be", ":BufferLinePickClose<cr>", desc = "Pick which buffer to close", nowait = true, remap = false },
+        { prefix .. "bf", ":Telescope buffers previewer=false<cr>", desc = "Find", nowait = true, remap = false },
+        { prefix .. "bh", ":BufferLineCloseLeft<cr>", desc = "Close all to the left", nowait = true, remap = false },
+        { prefix .. "bj", ":BufferLinePick<cr>", desc = "Jump", nowait = true, remap = false },
+        { prefix .. "bl", ":BufferLineCloseRight<cr>", desc = "Close all to the right", nowait = true, remap = false },
+        { prefix .. "bn", ":BufferLineCycleNext<cr>", desc = "Next", nowait = true, remap = false },
+        --- Debug
+        { prefix .. "d", group = "Debug", nowait = true, remap = false },
+        { prefix .. "dC", ":lua require'dap'.run_to_cursor()<cr>", desc = "Run To Cursor", nowait = true, remap = false },
+        { prefix .. "dU", ":lua require'dapui'.toggle({reset = true})<cr>", desc = "Toggle UI", nowait = true, remap = false },
+        { prefix .. "db", ":lua require'dap'.step_back()<cr>", desc = "Step Back", nowait = true, remap = false },
+        { prefix .. "dc", ":lua require'dap'.continue()<cr>", desc = "Continue", nowait = true, remap = false },
+        { prefix .. "dd", ":lua require'dap'.disconnect()<cr>", desc = "Disconnect", nowait = true, remap = false },
+        { prefix .. "dg", ":lua require'dap'.session()<cr>", desc = "Get Session", nowait = true, remap = false },
+        { prefix .. "di", ":lua require'dap'.step_into()<cr>", desc = "Step Into", nowait = true, remap = false },
+        { prefix .. "do", ":lua require'dap'.step_over()<cr>", desc = "Step Over", nowait = true, remap = false },
+        { prefix .. "dp", ":lua require'dap'.pause()<cr>", desc = "Pause", nowait = true, remap = false },
+        { prefix .. "dq", ":lua require'dap'.close()<cr>", desc = "Quit", nowait = true, remap = false },
+        { prefix .. "dr", ":lua require'dap'.repl.toggle()<cr>", desc = "Toggle Repl", nowait = true, remap = false },
+        { prefix .. "ds", ":lua require'dap'.continue()<cr>", desc = "Start", nowait = true, remap = false },
+        { prefix .. "dt", ":lua require'dap'.toggle_breakpoint()<cr>", desc = "Toggle Breakpoint", nowait = true, remap = false },
+        { prefix .. "du", ":lua require'dap'.step_out()<cr>", desc = "Step Out", nowait = true, remap = false },
+        { prefix .. "g", group = "Git", nowait = true, remap = false },
+        { prefix .. "gL", ":lua require 'gitsigns'.blame_line({full=true})<cr>", desc = "Blame Line (full)", nowait = true, remap = false },
+        { prefix .. "gR", ":lua require 'gitsigns'.reset_buffer()<cr>", desc = "Reset Buffer", nowait = true, remap = false },
+        { prefix .. "gb", ":Telescope git_branches<cr>", desc = "Checkout branch", nowait = true, remap = false },
+        { prefix .. "gc", ":Telescope git_commits<cr>", desc = "Checkout commit", nowait = true, remap = false },
+        { prefix .. "gd", ":Gitsigns diffthis HEAD<cr>", desc = "Git Diff", nowait = true, remap = false },
+        { prefix .. "gg", ":lua require 'lvim.core.terminal'.lazygit_toggle()<cr>", desc = "Lazygit", nowait = true, remap = false },
+        { prefix .. "gj", ":lua require 'gitsigns'.nav_hunk('next', {navigation_message = false})<cr>", desc = "Next Hunk", nowait = true, remap = false },
+        { prefix .. "gk", ":lua require 'gitsigns'.nav_hunk('prev', {navigation_message = false})<cr>", desc = "Prev Hunk", nowait = true, remap = false },
+        { prefix .. "gl", ":lua require 'gitsigns'.blame_line()<cr>", desc = "Blame", nowait = true, remap = false },
+        { prefix .. "go", ":Telescope git_status<cr>", desc = "Open changed file", nowait = true, remap = false },
+        { prefix .. "gp", ":lua require 'gitsigns'.preview_hunk()<cr>", desc = "Preview Hunk", nowait = true, remap = false },
+        { prefix .. "gr", ":lua require 'gitsigns'.reset_hunk()<cr>", desc = "Reset Hunk", nowait = true, remap = false },
+        { prefix .. "gs", ":lua require 'gitsigns'.stage_hunk()<cr>", desc = "Stage Hunk", nowait = true, remap = false },
+        { prefix .. "gu", ":lua require 'gitsigns'.undo_stage_hunk()<cr>", desc = "Undo Stage Hunk", nowait = true, remap = false },
+        --- LSP
+        { prefix .. "l", group = "LSP", nowait = true, remap = false },
+        { prefix .. "lI", ":Mason<cr>", desc = "Mason Info", nowait = true, remap = false },
+        { prefix .. "lS", ":Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace Symbols", nowait = true, remap = false },
+        { prefix .. "la", ":lua vim.lsp.buf.code_action()<cr>", desc = "Code Action", nowait = true, remap = false },
+        { prefix .. "ld", ":Telescope diagnostics bufnr=0 theme=get_ivy<cr>", desc = "Buffer Diagnostics", nowait = true, remap = false },
+        { prefix .. "le", ":Telescope quickfix<cr>", desc = "Telescope Quickfix", nowait = true, remap = false },
+        { prefix .. "lf", ":lua require('lvim.lsp.utils').format()<cr>", desc = "Format", nowait = true, remap = false },
+        { prefix .. "li", ":LspInfo<cr>", desc = "Info", nowait = true, remap = false },
+        { prefix .. "lj", ":lua vim.diagnostic.goto_next()<cr>", desc = "Next Diagnostic", nowait = true, remap = false },
+        { prefix .. "lk", ":lua vim.diagnostic.goto_prev()<cr>", desc = "Prev Diagnostic", nowait = true, remap = false },
+        { prefix .. "ll", ":lua vim.lsp.codelens.run()<cr>", desc = "CodeLens Action", nowait = true, remap = false },
+        { prefix .. "lq", ":lua vim.diagnostic.setloclist()<cr>", desc = "Quickfix", nowait = true, remap = false },
+        { prefix .. "lr", ":lua vim.lsp.buf.rename()<cr>", desc = "Rename", nowait = true, remap = false },
+        { prefix .. "ls", ":Telescope lsp_document_symbols<cr>", desc = "Document Symbols", nowait = true, remap = false },
+        { prefix .. "lw", ":Telescope diagnostics<cr>", desc = "Diagnostics", nowait = true, remap = false },
+        --- Plugins
+        { prefix .. "p", group = "Plugins", nowait = true, remap = false },
+        { prefix .. "pS", ":Lazy clear<cr>", desc = "Status", nowait = true, remap = false },
+        { prefix .. "pc", ":Lazy clean<cr>", desc = "Clean", nowait = true, remap = false },
+        { prefix .. "pd", ":Lazy debug<cr>", desc = "Debug", nowait = true, remap = false },
+        { prefix .. "pi", ":Lazy install<cr>", desc = "Install", nowait = true, remap = false },
+        { prefix .. "pl", ":Lazy log<cr>", desc = "Log", nowait = true, remap = false },
+        { prefix .. "pp", ":Lazy profile<cr>", desc = "Profile", nowait = true, remap = false },
+        { prefix .. "ps", ":Lazy sync<cr>", desc = "Sync", nowait = true, remap = false },
+        { prefix .. "pu", ":Lazy update<cr>", desc = "Update", nowait = true, remap = false },
+        --- Search
+        { prefix .. "s", group = "Search", nowait = true, remap = false },
+        { prefix .. "sC", ":Telescope commands<cr>", desc = "Commands", nowait = true, remap = false },
+        { prefix .. "sH", ":Telescope highlights<cr>", desc = "Find highlight groups", nowait = true, remap = false },
+        { prefix .. "sM", ":Telescope man_pages<cr>", desc = "Man Pages", nowait = true, remap = false },
+        { prefix .. "sR", ":Telescope registers<cr>", desc = "Registers", nowait = true, remap = false },
+        { prefix .. "sb", ":Telescope git_branches<cr>", desc = "Checkout branch", nowait = true, remap = false },
+        { prefix .. "sc", ":Telescope colorscheme<cr>", desc = "Colorscheme", nowait = true, remap = false },
+        { prefix .. "sf", ":Telescope find_files<cr>", desc = "Find File", nowait = true, remap = false },
+        { prefix .. "sh", ":Telescope help_tags<cr>", desc = "Find Help", nowait = true, remap = false },
+        { prefix .. "sk", ":Telescope keymaps<cr>", desc = "Keymaps", nowait = true, remap = false },
+        { prefix .. "sl", ":Telescope resume<cr>", desc = "Resume last search", nowait = true, remap = false },
+        { prefix .. "sp", ":lua require('telescope.builtin').colorscheme({enable_preview = true})<cr>", desc = "Colorscheme with Preview", nowait = true, remap = false },
+        { prefix .. "sr", ":Telescope oldfiles<cr>", desc = "Open Recent File", nowait = true, remap = false },
+        { prefix .. "st", ":Telescope live_grep<cr>", desc = "Text", nowait = true, remap = false },
       },
-      g = {
-        name = "Git",
-        r = { "<cmd>Gitsigns reset_hunk<cr>", "Reset Hunk" },
-        s = { "<cmd>Gitsigns stage_hunk<cr>", "Stage Hunk" },
-      },
-    },
-    mappings = {
-      [";"] = { "<cmd>Alpha<CR>", "Dashboard" },
-      ["w"] = { "<cmd>w!<CR>", "Save" },
-      ["q"] = { "<cmd>confirm q<CR>", "Quit" },
-      ["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
-      ["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
-      ["f"] = {
-        function()
-          require("lvim.core.telescope.custom-finders").find_project_files { previewer = false }
-        end,
-        "Find File",
-      },
-      ["h"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
-      ["e"] = { "<cmd>NvimTreeToggle<CR>", "Explorer" },
-      b = {
-        name = "Buffers",
-        j = { "<cmd>BufferLinePick<cr>", "Jump" },
-        f = { "<cmd>Telescope buffers previewer=false<cr>", "Find" },
-        b = { "<cmd>BufferLineCyclePrev<cr>", "Previous" },
-        n = { "<cmd>BufferLineCycleNext<cr>", "Next" },
-        W = { "<cmd>noautocmd w<cr>", "Save without formatting (noautocmd)" },
-        -- w = { "<cmd>BufferWipeout<cr>", "Wipeout" }, -- TODO: implement this for bufferline
-        e = {
-          "<cmd>BufferLinePickClose<cr>",
-          "Pick which buffer to close",
-        },
-        h = { "<cmd>BufferLineCloseLeft<cr>", "Close all to the left" },
-        l = {
-          "<cmd>BufferLineCloseRight<cr>",
-          "Close all to the right",
-        },
-        D = {
-          "<cmd>BufferLineSortByDirectory<cr>",
-          "Sort by directory",
-        },
-        L = {
-          "<cmd>BufferLineSortByExtension<cr>",
-          "Sort by language",
-        },
-      },
-      d = {
-        name = "Debug",
-        t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
-        b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
-        c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-        C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
-        d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
-        g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
-        i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
-        o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
-        u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
-        p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
-        r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
-        s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
-        q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
-        U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
-      },
-      p = {
-        name = "Plugins",
-        i = { "<cmd>Lazy install<cr>", "Install" },
-        s = { "<cmd>Lazy sync<cr>", "Sync" },
-        S = { "<cmd>Lazy clear<cr>", "Status" },
-        c = { "<cmd>Lazy clean<cr>", "Clean" },
-        u = { "<cmd>Lazy update<cr>", "Update" },
-        p = { "<cmd>Lazy profile<cr>", "Profile" },
-        l = { "<cmd>Lazy log<cr>", "Log" },
-        d = { "<cmd>Lazy debug<cr>", "Debug" },
-      },
-
-      -- " Available Debug Adapters:
-      -- "   https://microsoft.github.io/debug-adapter-protocol/implementors/adapters/
-      -- " Adapter configuration and installation instructions:
-      -- "   https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
-      -- " Debug Adapter protocol:
-      -- "   https://microsoft.github.io/debug-adapter-protocol/
-      -- " Debugging
-      g = {
-        name = "Git",
-        g = { "<cmd>lua require 'lvim.core.terminal'.lazygit_toggle()<cr>", "Lazygit" },
-        j = { "<cmd>lua require 'gitsigns'.nav_hunk('next', {navigation_message = false})<cr>", "Next Hunk" },
-        k = { "<cmd>lua require 'gitsigns'.nav_hunk('prev', {navigation_message = false})<cr>", "Prev Hunk" },
-        l = { "<cmd>lua require 'gitsigns'.blame_line()<cr>", "Blame" },
-        L = { "<cmd>lua require 'gitsigns'.blame_line({full=true})<cr>", "Blame Line (full)" },
-        p = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", "Preview Hunk" },
-        r = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", "Reset Hunk" },
-        R = { "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", "Reset Buffer" },
-        s = { "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", "Stage Hunk" },
-        u = {
-          "<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>",
-          "Undo Stage Hunk",
-        },
-        o = { "<cmd>Telescope git_status<cr>", "Open changed file" },
-        b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
-        c = { "<cmd>Telescope git_commits<cr>", "Checkout commit" },
-        C = {
-          "<cmd>Telescope git_bcommits<cr>",
-          "Checkout commit(for current file)",
-        },
-        d = {
-          "<cmd>Gitsigns diffthis HEAD<cr>",
-          "Git Diff",
-        },
-      },
-      l = {
-        name = "LSP",
-        a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
-        d = { "<cmd>Telescope diagnostics bufnr=0 theme=get_ivy<cr>", "Buffer Diagnostics" },
-        w = { "<cmd>Telescope diagnostics<cr>", "Diagnostics" },
-        f = { "<cmd>lua require('lvim.lsp.utils').format()<cr>", "Format" },
-        i = { "<cmd>LspInfo<cr>", "Info" },
-        I = { "<cmd>Mason<cr>", "Mason Info" },
-        j = {
-          "<cmd>lua vim.diagnostic.goto_next()<cr>",
-          "Next Diagnostic",
-        },
-        k = {
-          "<cmd>lua vim.diagnostic.goto_prev()<cr>",
-          "Prev Diagnostic",
-        },
-        l = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens Action" },
-        q = { "<cmd>lua vim.diagnostic.setloclist()<cr>", "Quickfix" },
-        r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
-        s = { "<cmd>Telescope lsp_document_symbols<cr>", "Document Symbols" },
-        S = {
-          "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>",
-          "Workspace Symbols",
-        },
-        e = { "<cmd>Telescope quickfix<cr>", "Telescope Quickfix" },
-      },
-      L = {
-        name = "+LunarVim",
-        c = {
-          "<cmd>edit " .. get_config_dir() .. "/config.lua<cr>",
-          "Edit config.lua",
-        },
-        d = { "<cmd>LvimDocs<cr>", "View LunarVim's docs" },
-        f = {
-          "<cmd>lua require('lvim.core.telescope.custom-finders').find_lunarvim_files()<cr>",
-          "Find LunarVim files",
-        },
-        g = {
-          "<cmd>lua require('lvim.core.telescope.custom-finders').grep_lunarvim_files()<cr>",
-          "Grep LunarVim files",
-        },
-        k = { "<cmd>Telescope keymaps<cr>", "View LunarVim's keymappings" },
-        i = {
-          "<cmd>lua require('lvim.core.info').toggle_popup(vim.bo.filetype)<cr>",
-          "Toggle LunarVim Info",
-        },
-        I = {
-          "<cmd>lua require('lvim.core.telescope.custom-finders').view_lunarvim_changelog()<cr>",
-          "View LunarVim's changelog",
-        },
-        l = {
-          name = "+logs",
-          d = {
-            "<cmd>lua require('lvim.core.terminal').toggle_log_view(require('lvim.core.log').get_path())<cr>",
-            "view default log",
-          },
-          D = {
-            "<cmd>lua vim.fn.execute('edit ' .. require('lvim.core.log').get_path())<cr>",
-            "Open the default logfile",
-          },
-          l = {
-            "<cmd>lua require('lvim.core.terminal').toggle_log_view(vim.lsp.get_log_path())<cr>",
-            "view lsp log",
-          },
-          L = { "<cmd>lua vim.fn.execute('edit ' .. vim.lsp.get_log_path())<cr>", "Open the LSP logfile" },
-          n = {
-            "<cmd>lua require('lvim.core.terminal').toggle_log_view(os.getenv('NVIM_LOG_FILE'))<cr>",
-            "view neovim log",
-          },
-          N = { "<cmd>edit $NVIM_LOG_FILE<cr>", "Open the Neovim logfile" },
-        },
-        r = { "<cmd>LvimReload<cr>", "Reload LunarVim's configuration" },
-        u = { "<cmd>LvimUpdate<cr>", "Update LunarVim" },
-      },
-      s = {
-        name = "Search",
-        b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
-        c = { "<cmd>Telescope colorscheme<cr>", "Colorscheme" },
-        f = { "<cmd>Telescope find_files<cr>", "Find File" },
-        h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
-        H = { "<cmd>Telescope highlights<cr>", "Find highlight groups" },
-        M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
-        r = { "<cmd>Telescope oldfiles<cr>", "Open Recent File" },
-        R = { "<cmd>Telescope registers<cr>", "Registers" },
-        t = { "<cmd>Telescope live_grep<cr>", "Text" },
-        k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
-        C = { "<cmd>Telescope commands<cr>", "Commands" },
-        l = { "<cmd>Telescope resume<cr>", "Resume last search" },
-        p = {
-          "<cmd>lua require('telescope.builtin').colorscheme({enable_preview = true})<cr>",
-          "Colorscheme with Preview",
-        },
-      },
-      T = {
-        name = "Treesitter",
-        i = { ":TSConfigInfo<cr>", "Info" },
-      },
-    },
+    }
   }
 end
 
 M.setup = function()
   local which_key = require "which-key"
+  local defaults =  lvim.builtin.which_key.defaults[1]
+  -- Log:error('before '.. #defaults)
 
-  which_key.setup(lvim.builtin.which_key.setup)
+  if not vim.tbl_isempty(lvim.builtin.which_key.user) then
+    userKeys = lvim.builtin.which_key.user
 
-  local opts = lvim.builtin.which_key.opts
-  local vopts = lvim.builtin.which_key.vopts
+    local userKeysArray = {}
+    -- Loop through the table of tables
+    for _, tbl in ipairs(userKeys) do
+      -- Capture the first value from the table
+      table.insert(userKeysArray, tbl[1])
+    end
 
-  local mappings = lvim.builtin.which_key.mappings
-  local vmappings = lvim.builtin.which_key.vmappings
+    which_key.add(userKeys)
+    --- Remove duplicated keys from defaults
+    defaults = removeDuplicatedKeys(defaults, userKeysArray)
+  end
 
-  which_key.register(mappings, opts)
-  which_key.register(vmappings, vopts)
+  --- assign remaining defaults
+  lvim.builtin.which_key.opts.spec = defaults
+
+  --- setup
+  which_key.setup(lvim.builtin.which_key.opts)
 
   if lvim.builtin.which_key.on_config_done then
     lvim.builtin.which_key.on_config_done(which_key)
