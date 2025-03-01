@@ -216,9 +216,12 @@ local core_plugins = {
 
   -- Icons
   {
-    "nvim-tree/nvim-web-devicons",
+    "echasnovski/mini.icons",
     enabled = lvim.use_icons,
-    lazy = true,
+    version = false,
+    config = function()
+      require("lvim.core.mini-icons").setup()
+    end,
   },
 
   -- Status Line and Bufferline

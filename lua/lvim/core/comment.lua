@@ -2,7 +2,7 @@ local M = {}
 
 function M.config()
   lvim.builtin.comment = {
-    active = true,
+    active = false,
     on_config_done = nil,
     ---Add a space b/w comment and the line
     ---@type boolean
