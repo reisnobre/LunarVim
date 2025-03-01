@@ -1,42 +1,29 @@
 local M = {}
 
+local get_icon = require("lvim.core.mini-icons").get_icon
+
 M.config = function()
   lvim.builtin.gitsigns = {
     active = true,
     on_config_done = nil,
     opts = {
       signs = {
-        add = {
-          hl = "GitSignsAdd",
-          text = lvim.icons.ui.BoldLineLeft,
-          numhl = "GitSignsAddNr",
-          linehl = "GitSignsAddLn",
-        },
-        change = {
-          hl = "GitSignsChange",
-          text = lvim.icons.ui.BoldLineLeft,
-          numhl = "GitSignsChangeNr",
-          linehl = "GitSignsChangeLn",
-        },
-        delete = {
-          hl = "GitSignsDelete",
-          text = lvim.icons.ui.Triangle,
-          numhl = "GitSignsDeleteNr",
-          linehl = "GitSignsDeleteLn",
-        },
-        topdelete = {
-          hl = "GitSignsDelete",
-          text = lvim.icons.ui.Triangle,
-          numhl = "GitSignsDeleteNr",
-          linehl = "GitSignsDeleteLn",
-        },
-        changedelete = {
-          hl = "GitSignsChange",
-          text = lvim.icons.ui.BoldLineLeft,
-          numhl = "GitSignsChangeNr",
-          linehl = "GitSignsChangeLn",
-        },
+        add          = { text = get_icon("BoldLineLeft", { category = "ui" }).icon },
+        change       = { text = get_icon("BoldLineLeft", { category = "ui" }).icon },
+        delete       = { text = get_icon("Triangle", { category = "ui" }).icon },
+        topdelete    = { text = get_icon("Triangle", { category = "ui" }).icon },
+        changedelete = { text = '~' },
+        untracked    = { text = '┆' },
       },
+      signs_staged = {
+        add          = { text = get_icon("BoldLineLeft", { category = "ui" }).icon },
+        change       = { text = get_icon("BoldLineLeft", { category = "ui" }).icon },
+        delete       = { text = get_icon("Triangle", { category = "ui" }).icon },
+        topdelete    = { text = get_icon("Triangle", { category = "ui" }).icon },
+        changedelete = { text = '~' },
+        untracked    = { text = '┆' },
+      },
+      signs_staged_enable = true,
       signcolumn = true,
       numhl = false,
       linehl = false,
@@ -65,8 +52,7 @@ M.config = function()
         relative = "cursor",
         row = 0,
         col = 1,
-      },
-      yadm = { enable = false },
+      }
     },
   }
 end
