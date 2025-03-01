@@ -51,10 +51,10 @@
     "commit": "08bbc93"
   },
   "mason-lspconfig.nvim": {
-    "commit": "a4caa0d"
+    "commit": "1a31f82"
   },
   "mason.nvim": {
-    "commit": "49ff59a"
+    "commit": "fc98833"
   },
   "neodev.nvim": {
     "commit": "ce9a2e8"
