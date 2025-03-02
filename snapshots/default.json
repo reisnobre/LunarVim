@@ -5,11 +5,8 @@
   "LuaSnip": {
     "commit": "1def353"
   },
-  "alpha-nvim": {
-    "commit": "de72250"
-  },
-  "bigfile.nvim": {
-    "commit": "33eb067"
+  "folke/snacks.nvim": {
+    "commit": "bc0630e"
   },
   "bufferline.nvim": {
     "commit": "655133c"
@@ -34,9 +31,6 @@
   },
   "gitsigns.nvim": {
     "commit": "4c40357"
-  },
-  "indent-blankline.nvim": {
-    "commit": "e10626f"
   },
   "lazy.nvim": {
     "commit": "6c3bda4"

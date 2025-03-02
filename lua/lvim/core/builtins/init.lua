@@ -19,7 +19,6 @@ local builtins = {
   "lvim.core.autopairs",
   "lvim.core.comment",
   "lvim.core.lualine",
-  "lvim.core.alpha",
   "lvim.core.mason",
   "lvim.core.mini-icons"
 }
