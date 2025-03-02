@@ -336,34 +336,11 @@ local core_plugins = {
     end,
     lazy = lvim.colorscheme ~= "onedarker",
   },
-  {
-    "folke/snacks.nvim",
+  { "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
-    ---@type snacks.Config
-    opts = {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-      dashboard = require("lvim.core.snacks.snacks-dashboard"),
-      bigfile = { enabled = true },
-      indent = { enabled = true },
-      notifier = { enabled = true },
-      quickfile = { enabled = true },
-      scope = { enabled = true },
-      statuscolumn = { enabled = true },
-      words = { enabled = true },
-      input = { enabled = false },
-      explorer = { enabled = false },
-      picker = { enabled = false },
-      scroll = { enabled = false },
-    },
-    config = function(_, opts)
-      local notify = vim.notify
-      require("snacks").setup(opts)
-      -- HACK: restore vim.notify after snacks setup and let noice.nvim take over
-      -- this is needed to have early notifications show up in noice history
-      vim.notify = notify
+    config = function()
+      require("lvim.core.snacks").setup()
     end,
   }
 }

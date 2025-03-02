@@ -11,6 +11,7 @@ local builtins = {
   "lvim.core.treesitter",
   "lvim.core.nvimtree",
   "lvim.core.lir",
+  "lvim.core.snacks",
   "lvim.core.illuminate",
   "lvim.core.breadcrumbs",
   "lvim.core.project",
