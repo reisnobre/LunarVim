@@ -16,7 +16,7 @@ M.get_icon = function(name, opts)
   end
 
   return {
-    icon = require("mini.icons").get(category, name),
+    icon = '',
     color = color,
   }
 end
