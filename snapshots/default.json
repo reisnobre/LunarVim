@@ -50,8 +50,8 @@
   "mason.nvim": {
     "commit": "fc98833"
   },
-  "neodev.nvim": {
-    "commit": "ce9a2e8"
+  "lazydev.nvim": {
+    "commit": "2367a6c"
   },
   "nlsp-settings.nvim": {
     "commit": "196a0d1"
