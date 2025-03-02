@@ -341,7 +341,14 @@ local core_plugins = {
       require("lvim.core.mini.mini-ai").setup()
       require("lvim.core.mini.mini-ai").ai_whichkey(opts)
     end,
-  }
+  },
+  {
+    'echasnovski/mini.surround',
+    version = false,
+    config = function(_, opts)
+      require("lvim.core.mini.mini-surround").setup()
+    end,
+  },
 }
 
 local default_snapshot_path = join_paths(get_lvim_base_dir(), "snapshots", "default.json")
