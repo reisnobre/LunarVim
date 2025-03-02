@@ -20,7 +20,7 @@ local builtins = {
   "lvim.core.comment",
   "lvim.core.lualine",
   "lvim.core.mason",
-  "lvim.core.mini-icons",
+  "lvim.core.mini.mini-icons",
   "lvim.core.mini-ai",
 }
 

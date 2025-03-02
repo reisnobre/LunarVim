@@ -218,7 +218,7 @@ local core_plugins = {
     enabled = lvim.use_icons,
     version = false,
     config = function()
-      require("lvim.core.mini-icons").setup()
+      require("lvim.core.mini.mini-icons").setup()
     end,
   },
 

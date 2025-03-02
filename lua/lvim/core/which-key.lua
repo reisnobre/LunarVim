@@ -1,7 +1,7 @@
 local M = {}
 
 local prefix = "<leader>"
-local get_icon = require("lvim.core.mini-icons").get_icon
+local get_icon = require("lvim.core.mini.mini-icons").get_icon
 -- local keymap = vim.keymap
 -- local Log = require "lvim.core.log"
 

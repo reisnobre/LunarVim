@@ -1,6 +1,6 @@
 local M = {}
 
-local get_icon = require("lvim.core.mini-icons").get_icon
+local get_icon = require("lvim.core.mini.mini-icons").get_icon
 
 M.config = function()
   lvim.builtin.gitsigns = {
