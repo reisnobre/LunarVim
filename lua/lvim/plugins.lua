@@ -335,10 +335,11 @@ local core_plugins = {
     end,
   },
   {
-    'echasnovski/mini.ai',
+    "echasnovski/mini.ai",
     version = false,
-    config = function()
-      require("lvim.core.mini-ai").setup()
+    config = function(_, opts)
+      require("lvim.core.mini.mini-ai").setup()
+      require("lvim.core.mini.mini-ai").ai_whichkey(opts)
     end,
   }
 }
