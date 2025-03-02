@@ -15,8 +15,17 @@ M.get_icon = function(name, opts)
     end
   end
 
+  local status_ok, mini_icons = pcall(require, "mini.icons")
+
+  if not status_ok then
+    return {
+      icon = '?',
+      color = color,
+    }
+  end
+
   return {
-    icon = '',
+    icon = require("mini.icons").get(category, name),
     color = color,
   }
 end
