@@ -34,7 +34,8 @@ M.config = function()
   lvim.builtin.mini_icons = {
     active = true,
     on_config_done = nil,
-    setup = {}
+    setup = {},
+    opts = {}
   }
 
 end
@@ -45,7 +46,7 @@ function M.setup()
     return
   end
 
-  mini_icons.setup(lvim.builtin.mini_icons)
+  mini_icons.setup(lvim.builtin.mini_icons.opts)
 
   if lvim.builtin.mini_icons.on_config_done then
     lvim.builtin.mini_icons.on_config_done(mini_icons)
