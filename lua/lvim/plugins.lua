@@ -333,6 +333,13 @@ local core_plugins = {
     config = function()
       require("lvim.core.snacks").setup()
     end,
+  },
+  {
+    'echasnovski/mini.ai',
+    version = false,
+    config = function()
+      require("lvim.core.mini-ai").setup()
+    end,
   }
 }
 

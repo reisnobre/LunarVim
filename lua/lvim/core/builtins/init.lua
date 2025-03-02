@@ -20,7 +20,8 @@ local builtins = {
   "lvim.core.comment",
   "lvim.core.lualine",
   "lvim.core.mason",
-  "lvim.core.mini-icons"
+  "lvim.core.mini-icons",
+  "lvim.core.mini-ai",
 }
 
 function M.config(config)
