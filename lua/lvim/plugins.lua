@@ -169,15 +169,6 @@ local core_plugins = {
     cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus", "NvimTreeFindFileToggle" },
     event = "User DirOpened",
   },
-  -- Lir
-  {
-    "tamago324/lir.nvim",
-    config = function()
-      require("lvim.core.lir").setup()
-    end,
-    enabled = lvim.builtin.lir.active,
-    event = "User DirOpened",
-  },
   {
     "lewis6991/gitsigns.nvim",
     config = function()
