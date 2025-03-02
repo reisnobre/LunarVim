@@ -114,6 +114,7 @@ return {
     Plus = "",
     Project = "",
     Search = "",
+    SearchAlt = "",
     SignIn = "",
     SignOut = "",
     Tab = "󰌒",

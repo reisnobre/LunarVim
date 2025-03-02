@@ -49,7 +49,6 @@ local core_plugins = {
   -- Telescope
   {
     "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
     config = function()
       require("lvim.core.telescope").setup()
     end,
@@ -279,16 +278,6 @@ local core_plugins = {
     enabled = lvim.builtin.dap.active,
   },
 
-  -- alpha
-  {
-    "goolord/alpha-nvim",
-    config = function()
-      require("lvim.core.alpha").setup()
-    end,
-    enabled = lvim.builtin.alpha.active,
-    event = "VimEnter",
-  },
-
   -- Terminal
   {
     "akinsho/toggleterm.nvim",
@@ -327,15 +316,6 @@ local core_plugins = {
   },
 
   {
-    "lukas-reineke/indent-blankline.nvim",
-    config = function()
-      require("lvim.core.indentlines").setup()
-    end,
-    event = "User FileOpened",
-    enabled = lvim.builtin.indentlines.active,
-  },
-
-  {
     "lunarvim/onedarker.nvim",
     branch = "freeze",
     config = function()
@@ -348,18 +328,36 @@ local core_plugins = {
     end,
     lazy = lvim.colorscheme ~= "onedarker",
   },
-
   {
-    "lunarvim/bigfile.nvim",
-    config = function()
-      pcall(function()
-        require("bigfile").setup(lvim.builtin.bigfile.config)
-      end)
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    ---@type snacks.Config
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+      dashboard = require("lvim.core.snacks.snacks-dashboard"),
+      bigfile = { enabled = true },
+      indent = { enabled = true },
+      notifier = { enabled = true },
+      quickfile = { enabled = true },
+      scope = { enabled = true },
+      statuscolumn = { enabled = true },
+      words = { enabled = true },
+      input = { enabled = false },
+      explorer = { enabled = false },
+      picker = { enabled = false },
+      scroll = { enabled = false },
+    },
+    config = function(_, opts)
+      local notify = vim.notify
+      require("snacks").setup(opts)
+      -- HACK: restore vim.notify after snacks setup and let noice.nvim take over
+      -- this is needed to have early notifications show up in noice history
+      vim.notify = notify
     end,
-    enabled = lvim.builtin.bigfile.active,
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    event = { "FileReadPre", "BufReadPre", "User FileOpened" },
-  },
+  }
 }
 
 local default_snapshot_path = join_paths(get_lvim_base_dir(), "snapshots", "default.json")
