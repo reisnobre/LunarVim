@@ -337,6 +337,7 @@ local core_plugins = {
   {
     "echasnovski/mini.ai",
     version = false,
+    event = "VeryLazy",
     config = function(_, opts)
       require("lvim.core.mini.mini-ai").setup()
       require("lvim.core.mini.mini-ai").ai_whichkey(opts)
@@ -345,6 +346,7 @@ local core_plugins = {
   {
     'echasnovski/mini.surround',
     version = false,
+    event = "VeryLazy",
     config = function(_, opts)
       require("lvim.core.mini.mini-surround").setup()
     end,

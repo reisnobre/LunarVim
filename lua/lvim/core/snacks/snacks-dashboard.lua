@@ -126,6 +126,8 @@ local banner_alt_2 = [[
   ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣤⣤⣀⣀⣀⣀⣀⣀⣤⣤⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
   ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ]]
 
+local lvim_version = require("lvim.utils.git").get_lvim_version()
+
 ---@class snacks.dashboard.Config
 ---@field enabled? boolean
 ---@field sections snacks.dashboard.Section
@@ -188,5 +190,12 @@ return {
     { section = "header" },
     { section = "keys", gap = 1, padding = 1 },
     { section = "startup" },
+    {
+      align = "center",
+      text = {
+        { "lunarvim.org ", hl = "footer" },
+        { lvim_version, hl = "special" },
+      },
+    }
   },
 }

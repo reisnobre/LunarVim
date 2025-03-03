@@ -115,7 +115,10 @@ M.config = function()
         { prefix .. "Lll", ":lua require('lvim.core.terminal').toggle_log_view(vim.lsp.get_log_path())<cr>", desc = "view lsp log" },
         { prefix .. "Lln", ":lua require('lvim.core.terminal').toggle_log_view(os.getenv('NVIM_LOG_FILE'))<cr>", desc = "view neovim log" },
         --- Treesitter
-        { prefix .. "T", group = "Treesitter" },
+        { prefix .. "T", group = "Treesitter", icon = get_icon('Tree', { category = 'ui', color = 'green' }) },
+        { prefix .. "Tq", ":TSPlaygroundToggle<cr>", desc = "Query" },
+        { prefix .. "Tr", ":TSPlaygroundToggle<cr>", desc = "Replace" },
+        { prefix .. "Tt", ":TSHighlightCapturesUnderCursor<cr>", desc = "Highlight" },
         { prefix .. "Ti", ":TSConfigInfo<cr>", desc = "Info" },
 
         --- Buffers
@@ -172,7 +175,7 @@ M.config = function()
         { prefix .. "gs", ":lua require 'gitsigns'.stage_hunk()<cr>", desc = "Stage Hunk" },
         { prefix .. "gu", ":lua require 'gitsigns'.undo_stage_hunk()<cr>", desc = "Undo Stage Hunk" },
         --- LSP
-        { prefix .. "l", group = "LSP" },
+        { prefix .. "l", group = "LSP", icon = get_icon('BoldHint', { category = 'diagnostics', color = 'purple' }) },
         { prefix .. "lI", ":Mason<cr>", desc = "Mason Info" },
         { prefix .. "lS", ":Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace Symbols" },
         { prefix .. "la", ":lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },
